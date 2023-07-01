@@ -12,6 +12,20 @@ const newPost = {
   userId: 1
 };
 
+let accessToken2;
+
+before(() => {
+  cy.log('Create a user with a token');
+  cy.request('POST', '/users', {
+    name: faker.person.firstName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
+  }).then(response => {
+    expect(response.status).to.equal(201);
+    accessToken2 = response.body.accessToken;
+    console.log('Access token', accessToken2);
+  });
+});
 
 
 it('Get all posts', () => {
@@ -75,13 +89,11 @@ it('Create a post and verify 401 Unauthorized', () => {
 it('Create a post with access token', () => {
   cy.log('Create a post with access token in header');
 
-  const accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJ1Y2h5bnNrYXlhLmp1bGlhQGdtYWlsLmNvbSIsImlhdCI6MTY4Nzk0OTc5MCwiZXhwIjoxNjg3OTUzMzkwLCJzdWIiOiIxMSJ9.vz70fb3zU3iYOIdMcELzSWcG54HyYyjBvNecmpXFj-4';
-
   cy.request({
     method: 'POST',
     url: '/664/posts',
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: `Bearer ${accessToken2}`
     },
     body: post
   }).then(response => {
